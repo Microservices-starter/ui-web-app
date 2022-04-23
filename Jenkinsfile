@@ -66,7 +66,7 @@ pipeline{
                 withCredentials([string(credentialsId: 'dockerhub', variable: 'password')]){
                     sh 'docker login -u rajputmarch2020 -p ${password} '
                 }
-                    sh 'docker push rajputmarch2020/wishlist:$GIT_COMMIT_HASH'
+                    sh 'docker push rajputmarch2020/ui-webapp:$GIT_COMMIT_HASH'
             }
         }
 
@@ -74,7 +74,7 @@ pipeline{
             steps{
                 echo "[INFO] Deleting Docker images after pushed to Dockerhub"
                 sh ''' 
-                  docker rmi rajputmarch2020/wishlist:$GIT_COMMIT_HASH
+                  docker rmi rajputmarch2020/ui-webapp:$GIT_COMMIT_HASH
                   docker image prune -f
                 '''
             }
