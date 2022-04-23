@@ -12,7 +12,7 @@ pipeline{
 
     environment{
         GIT_COMMIT_HASH = getVersion()
-        projectKey = "$projectKey}"
+        projectKey = "${projectKey}"
         scannerHome = "${JENKINS_HOME}"
 
     }
