@@ -12,7 +12,7 @@ pipeline{
 
     environment{
         GIT_COMMIT_HASH = getVersion()
-        projectKey = "$project-ui"
+        projectKey = "$projectKey}"
         scannerHome = "${JENKINS_HOME}"
 
     }
@@ -30,7 +30,7 @@ pipeline{
                 echo "[INFO] Performing analysis with Sonarqube"
                 script{
                     withSonarQubeEnv(credentialsId: 'sonartoken'){
-                        sh "sudo ${scannerHome}/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=$project-ui"
+                        sh "sudo ${scannerHome}/sonar-scanner/bin/sonar-scanner -Dsonar.projectKey=$projectKey"
                     }
                 }
             }
