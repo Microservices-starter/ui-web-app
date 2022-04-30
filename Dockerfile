@@ -1,6 +1,6 @@
-FROM node:8
+FROM node:12
 WORKDIR /app
 COPY . .
-RUN npm install
+RUN npm install 
 EXPOSE 8080
 CMD ["npm","start"]
