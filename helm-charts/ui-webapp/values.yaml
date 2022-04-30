@@ -1,0 +1,35 @@
+replicaCount: 1
+container:
+  name: ui
+image:
+  repository: rajputmarch2020/ui-webapp
+  pullPolicy: IfNotPresent
+  tag: ""
+
+service:
+  type: NodePort
+  port: 8080
+  targetPort: 8080
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+productionSlot: blue
+stagingSlot: green
+
+green:
+  tag: 
+  #enabled: true
+
+blue:
+  tag: 
+  #enabled: true
+
+label:
+  name: ui-webapp
+  service: ui

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{  .Values.label.name  }}-stage
+  labels:
+    service: {{  .Values.label.name  }}-stage  
+spec:
+  ports:
+  - port: {{ .Values.service.port }}
+    protocol: {{ .Values.service.protocol }}
+    targetPort: {{  .Values.service.targetPort }}
+    name: {{ .Values.service.name }}
+  selector:
+    app: {{  .Values.label.name  }}
+    # This determines which deployment the service is currently pointing to
+    slot: {{ .Values.stagingSlot }}
