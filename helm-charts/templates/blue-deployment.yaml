@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/instance: {{ include "ui-webapp.name" . }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     slot: blue
+    app: {{  .Values.label.name  }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -16,6 +17,7 @@ spec:
       app.kubernetes.io/instance: {{ include "ui-webapp.name" . }}
       app.kubernetes.io/managed-by: {{ .Release.Service }}
       slot: blue
+      app: {{  .Values.label.name  }}
   template:
     metadata:
       labels:
@@ -23,6 +25,7 @@ spec:
         app.kubernetes.io/instance: {{ include "ui-webapp.name" . }}
         app.kubernetes.io/managed-by: {{ .Release.Service }}
         slot: blue
+        app: {{  .Values.label.name  }}
     spec:   
       containers:
         - name: {{ .Values.container.name }}

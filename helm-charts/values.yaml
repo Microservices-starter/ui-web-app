@@ -10,23 +10,28 @@ service:
   type: NodePort
   port: 8080
   targetPort: 8080
+  nodePort: 30863
+  nodeport: 31863
+  name: ui
 
 resources:
   limits:
-    cpu: 100m
-    memory: 256Mi
+    cpu: 150m
+    memory: 512M
   requests:
-    cpu: 100m
-    memory: 256Mi
+    cpu: 150m
+    memory: 512M
 
 productionSlot: blue
 stagingSlot: green
 
 green:
+  appVersion:
   tag: 
   #enabled: true
 
 blue:
+  appVersion:
   tag: 
   #enabled: true
 
