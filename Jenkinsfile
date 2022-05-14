@@ -92,20 +92,64 @@ pipeline{
                 }
             }
         }
+
+        stage("Approval"){
+            steps{
+                script{
+                    timeout(10) {
+                        mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Go to build url and approve the deployment request <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "ravisinghrajput005@gmail.com";  
+                        input(id: "Deploy Gate", message: "Deploy ${params.project_name}?", ok: 'Deploy')
+                    }
+                }
+            }
+        }
+
+        stage("BlueGreen Deploy to Kubernetes cluster"){
+            steps{
+                script{
+                    withCredentials([kubeconfigFile(credentialsId: 'kubernetes-config', variable: 'KUBECONFIG')]){
+                        dir("helm-charts/ui-webapp"){
+                            sh '''
+                            currentDeploy=$(helm list | cut -f1 | grep ui)
+                            echo ${currentDeploy}
+                            if [ $? -eq 0 ]; then
+                               echo "Helm chart exists, proceeding with Blue Green deployment"
+                               bash blue-green.sh $GIT_COMMIT_HASH
+                            else
+                               echo "Helm chart is not installed, instaling.."
+                               bash blue.sh blue $GIT_COMMIT_HASH
+                            fi
+                            '''
+                        }
+                    }
+                }
+            }
+        }
     }
 
     post{
         always{
-            echo "========always========"
+            mail bcc: '', body: "<br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> URL de build: ${env.BUILD_URL}", cc: '', charset: 'UTF-8', from: '', mimeType: 'text/html', replyTo: '', subject: "${currentBuild.result} CI: Project name -> ${env.JOB_NAME}", to: "ravisinghrajput005@gmail.com";  
         }
         success{
-            echo "========pipeline executed successfully ========"
+            echo "[SUCCESS] Pipeline executed successfully  "
+            slackSend color: "good", message: "Status: Pipeline executed successfully  | Job: ${env.JOB_NAME} | Build number ${env.BUILD_NUMBER} "
         }
         failure{
-            echo "========pipeline execution failed========"
+            echo "[FAILED] pipeline execution failed   "
+            slackSend color: "danger", message: "Status: pipeline execution failed | Job: ${env.JOB_NAME} | Build number ${env.BUILD_NUMBER} 
         }
         changed{
-            echo "========build has changed from last run========"
+            echo "[UNSTABLE] Build is unstable   "
+            slackSend color: "yellow", message: "Status: Build is changed from the previous.  | Job: ${env.JOB_NAME} | Build number ${env.BUILD_NUMBER} "
+        }
+        unstable{
+            echo "[UNSTABLE] Build is unstable   "
+            slackSend color: "yellow", message: "Status: Build is unstable  | Job: ${env.JOB_NAME} | Build number ${env.BUILD_NUMBER} "
+        }
+        aborted{
+            echo "[ABORTED] Build was aborted   "
+            slackSend color: "yellow", message: "Status: Build was aborted  | Job: ${env.JOB_NAME} | Build number ${env.BUILD_NUMBER} "
         }
     }
 }
